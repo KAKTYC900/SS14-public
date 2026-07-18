@@ -1,9 +1,12 @@
 using Content.Server.Effects;
 using Content.Server.Imperial.Power.Components;
 using Content.Shared.Mobs.Components;
+using Content.Shared.Imperial.Power.Components;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Physics.Events;
 using Robust.Shared.Player;
+using Content.Server.Imperial.Power.EntitySystems.Events;
+using Content.Shared.Damage.Components;
 
 namespace Content.Server.Imperial.Power.EntitySystems;
 
@@ -11,24 +14,36 @@ public sealed class SupermatterTouchSystem : EntitySystem
 {
     [Dependency] private readonly ColorFlashEffectSystem _colorFlash = null!;
     [Dependency] private readonly SharedAudioSystem _audio = null!;
-
     public override void Initialize()
     {
         base.Initialize();
         SubscribeLocalEvent<SupermatterTouchComponent, StartCollideEvent>(OnStartCollide);
+        SubscribeLocalEvent<SupermatterGasComponent, SupermatterTouchedEvent>(OnTouched, before: [typeof(SupermatterEventSystem)]);
     }
 
     private void OnStartCollide(Entity<SupermatterTouchComponent> supermatter, ref StartCollideEvent args)
     {
         var other = args.OtherEntity;
-        if (!HasComp<MobStateComponent>(other))
+        if (!HasComp<MobStateComponent>(other) || HasComp<GodmodeComponent>(other))
+            return;
+
+        var touchEvent = new SupermatterTouchedEvent();
+        RaiseLocalEvent(supermatter, ref touchEvent);
+        if (touchEvent.Cancelled)
             return;
 
         var transformComp = Transform(other);
+        GibCollidedEntity(supermatter, (other, transformComp));
 
-        Entity<TransformComponent> entity = new(other, transformComp);
-        GibCollidedEntity(supermatter, entity);
-        RaiseLocalEvent(supermatter, new SupermatterTouchedEvent());
+    }
+
+    private static void OnTouched(Entity<SupermatterGasComponent> supermatter, ref SupermatterTouchedEvent args)
+    {
+        if (args.Cancelled)
+            return;
+
+        if (supermatter.Comp.RuntimeDisableTouchGib)
+            args.Cancelled = true;
     }
 
     private void GibCollidedEntity(Entity<SupermatterTouchComponent> supermatter, Entity<TransformComponent> entity)
@@ -42,5 +57,3 @@ public sealed class SupermatterTouchSystem : EntitySystem
             integrityComponent.Activated = true;
     }
 }
-
-public sealed class SupermatterTouchedEvent : EntityEventArgs;

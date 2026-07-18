@@ -353,7 +353,10 @@
 
 - type: entity
   name: cockroach
-  parent: SimpleMobBase
+  # Imperial Space VentCrawler; Start
+  # parent: SimpleMobBase
+  parent: [ SimpleMobBase, VentCrawlerPestMixin ]
+  # Imperial Space VentCrawler; End
   id: MobCockroach
   description: This station is just crawling with bugs.
   components:
@@ -1403,23 +1406,16 @@
     - map: [ "eyes" ] ##Imperial Space ancestors simple rework
     - map: [ "mask" ]
     - map: [ "head" ]
-    - map: [ "clownedon" ]
-      sprite: "Effects/creampie.rsi"
-      state: "creampie_human"
-      visible: false
   - type: Hands
     activeHandId: Hand
     hands:
       Hand:
         location: Left
   - type: ComplexInteraction
-  - type: GenericVisualizer
-    visuals:
-      enum.CreamPiedVisuals.Creamed:
-        clownedon:
-          True: {visible: true}
-          False: {visible: false}
   - type: CreamPied
+    sprite:
+      sprite: Effects/creampie.rsi
+      state: creampie_monkey
   - type: FireVisuals
     sprite: Mobs/Effects/onfire.rsi
     normalState: Monkey_burning
@@ -1457,7 +1453,10 @@
       - Passive
   - type: HTN
     rootTask:
-      task: SimpleHostileCompound
+      task: MonkeyCompound
+    blackboard:
+      NavInteract: !type:Bool
+        true
   - type: IdExaminable
   - type: Tag
     tags:
@@ -1481,9 +1480,13 @@
 - type: entity
   name: monkey
   id: MobMonkey
-  parent: MobBaseAncestor
+  # Imperial Space VentCrawler; Start
+  # parent: MobBaseAncestor
+  parent: [ MobBaseAncestor, VentCrawlerPestMixin ]
+  # Imperial Space VentCrawler; End
   description: New church of neo-darwinists actually believe that EVERY animal evolved from a monkey. Tastes like pork, and killing them is both fun and relaxing.
   components:
+  - type: CrewSkills # Imperial Space Crew SKills
   - type: NameIdentifier
     group: Monkey
   - type: Speech
@@ -1516,10 +1519,12 @@
 - type: entity
   name: monkey
   id: MobBaseSyndicateMonkey
-  parent: MobBaseAncestor
+  parent: MobBaseAncestor # TODO: fix copy paste from MobMonkey
   description: New church of neo-darwinists actually believe that EVERY animal evolved from a monkey. Tastes like pork, and killing them is both fun and relaxing.
   suffix: syndicate base
   components:
+  - type: CrewSkills # Imperial Space Crew SKills
+    groups: [All]
   - type: NameIdentifier
     group: Monkey
   - type: SentienceTarget
@@ -1640,10 +1645,6 @@
     - map: [ "id" ]
     - map: [ "mask" ]
     - map: [ "head" ]
-    - map: [ "clownedon" ]
-      sprite: "Effects/creampie.rsi"
-      state: "creampie_human"
-      visible: false
   - type: RandomSprite
     getAllGroups: true
     available:
@@ -1682,6 +1683,7 @@
   parent: MobBaseKobold
   description: Cousins to the sentient race of lizard people, kobolds blend in with their natural habitat and are as nasty as monkeys; ready to pull out your hair and stab you to death.
   components:
+  - type: CrewSkills # Imperial Space Crew SKills
   - type: Clumsy
     gunShootFailDamage:
       types:
@@ -1699,6 +1701,8 @@
   parent: MobBaseKobold
   suffix: syndicate base
   components:
+  - type: CrewSkills # Imperial Space Crew Skills
+    groups: [All]
   - type: MobThresholds
     thresholds:
       0: Alive
@@ -1729,7 +1733,7 @@
 - type: entity
   name: guidebook monkey
   parent: MobMonkey
-  categories: [ HideSpawnMenu ] 
+  categories: [ HideSpawnMenu ]
   id: MobGuidebookMonkey
   description: A hopefully helpful monkey whose only purpose in life is for you to click on. Does this count as having a monkey give you a tutorial?
   components:
@@ -1737,9 +1741,9 @@
 
 - type: entity
   name: mouse
-  parent:
-  - SimpleMobBase
-  - BaseMobAnimal
+  # Imperial Space VentCrawler; Start
+  parent: [ SimpleMobBase, BaseMobAnimal, VentCrawlerPestMixin ]
+  # Imperial Space VentCrawler; End
   id: MobMouse
   description: Squeak!
   components:
@@ -2465,7 +2469,10 @@
   # I have included a snake_hiss.ogg sound file so if you want to use that be my guest
 - type: entity
   name: snake
-  parent: SimpleMobBase
+  # Imperial Space VentCrawler; Start
+  # parent: SimpleMobBase
+  parent: [ SimpleMobBase, VentCrawlerPestMixin ]
+  # Imperial Space VentCrawler; End
   id: MobSnake
   description: Hissss! Bites aren't poisonous.
   components:
@@ -2633,7 +2640,10 @@
 
 - type: entity
   name: tarantula
-  parent: MobSpiderBase
+  # Imperial Space VentCrawler; Start
+  # parent: MobSpiderBase
+  parent: [ MobSpiderBase, VentCrawlerPestMixin ]
+  # Imperial Space VentCrawler; End
   id: MobGiantSpider
   description: Widely recognized to be the literal worst thing in existence.
   components:
@@ -3002,6 +3012,11 @@
   - type: MobPrice
     price: 200
   - type: MessyDrinker
+  # TODO: Fix the sprite offset
+  #- type: CreamPied
+  #  sprite:
+  #    sprite: Effects/creampie.rsi
+  #    state: creampie_corgi
 
 - type: entity
   parent: MobCorgiBase
